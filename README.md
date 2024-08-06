@@ -8,3 +8,8 @@ Aktuell sind mir keine Bugs bekannt, aber das heißt nur, dass ich nicht alles w
 Ein Script zur Auswertung folgt; aktuell ist es nicht für die Version 1.0 angepasst.
 Eine Version mit Datenbank ist nicht geplant.
 Eine Excel(de-de) kompatible Version war geplant, aber dadurch wird ein großteil der Logik des Scripts unwirksam, weil alle Zeilen soviele Spalten bekommen wie die längste zeile.->View only!
+
+Stundenrechner ist aktuell für 6Stunden eingestellt und wertet wochendtage nicht in die gearbeiteten tage-> nur überstunden am wochenende möglich
+
+todo: Auswertung von Stundenrechner in .csv schreiben
+late todo: configfile für time_log_monthly und stundenrechner implementieren, einstellungen sind aktuell im quelltext hardcoded und nicht als constanten angelegt
