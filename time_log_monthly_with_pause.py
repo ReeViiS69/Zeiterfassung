@@ -2,8 +2,8 @@ import csv
 from datetime import datetime
 import os
 
-def add_time_to_csv(filename, yn):
-    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+def add_time_to_csv(filename, today_var, yn):
+    current_time = today_var.strftime('%Y-%m-%d %H:%M:%S')
     if check_exists(filename):
         print('file exists and isnt empty, trying to add entry')
         write_line(filename, current_time, get_lines(filename), yn)
@@ -13,30 +13,14 @@ def add_time_to_csv(filename, yn):
 
 def check_exists(filename):
     if os.path.isfile(filename) and os.path.getsize(filename) > 0:
+        
         return True
 
 def get_lines(filename):
     with open(filename, mode='r', newline='') as file:
+        
         return file.readlines()
-'''
-def time_to_write():
-    if lines is not None:
-        current_line = lines[-1].strip()
-    else:
-        #workaround for nextline bugfix, so first line of file isnt empty
-        current_line='Starttime;Endtime;Pause;'
-        file.writelines(current_line)
-        
-    else:
-        #nextline here to prevent bug when current line gets altered manualy and loosing lineend(\n)
-        file.writelines('\n'+current_time+';')
-        print('added new line with current time')
-        
-def pause_to_write():
-    else:
-        file.writelines('pause='+current_time.split(' ',1)[1]+'/')
-        print('added pausetime at end of line without date')
-'''
+    
 def write_line(filename, current_time, lines, yn):
     with open(filename, mode='a', newline='') as file:
         if lines != None:
@@ -84,6 +68,7 @@ def write_line(filename, current_time, lines, yn):
             print('added pausetime at end of line without date')
 def last_happend(file):
     #print(get_lines(file)[-1])
+    
     return get_lines(file)[-1]
 
 def advise_pause_insteadof_time(last_line, yn):
@@ -102,7 +87,9 @@ def advise_pause_insteadof_time(last_line, yn):
                 yn='p'
     except:
         print('other error with pause instead of time?')
+        
     return yn
+
 def advise_time_insteadof_pause(last_line, yn):
     #check for last day ended(2 time entrys) and check for empty file or file with only header line in first line
     try:
@@ -114,9 +101,8 @@ def advise_time_insteadof_pause(last_line, yn):
             print('trypause: ', yn)
     except:
         print('other error with time instead of pause?')
+        
     return yn
-
-
 
 def reopentoday(filename, last_line, today_var):
     print('reopentoday:last_line:',last_line,':end lastline')
@@ -149,10 +135,14 @@ def check_lastday_today(last_line, today_var):
         fix_lastday = False
         if last_endtime.day == today_var.day:
             print('last endtime day=this day')
+            
             return True, fix_lastday
+        
         else:
             print('last endtime not this day')
+            
             return False, fix_lastday
+        
     except:
         print('day didnt end jet')
         fix_lastday = False
@@ -161,9 +151,12 @@ def check_lastday_today(last_line, today_var):
         if last_starttime.day < today_var.day:
             print('last starttime day nottoday')
             fix_lastday= True
+            
             return True, fix_lastday
+        
             #geplant soll hier irgendwas passieren das der letzte tag beendet wird und ein neuer aufgemacht wird wenn letzte line nicht heute ist
         else:
+            
             return False, fix_lastday
 
 def close_lastday(filename, uhrzeitende):
@@ -187,7 +180,7 @@ def close_lastday(filename, uhrzeitende):
         else:
             allpause+=pause+';'
         i+=1
-    final_pause=allpause#jedes zweite / zu ; muss noch
+    final_pause=allpause
     current_line+=final_pause
     with open(filename, mode='a', newline='') as file:
         file.seek(file.tell()-len(last_line),os.SEEK_SET)
@@ -217,7 +210,7 @@ if __name__ == "__main__":
         if '' != yn and yn != 'p':
             #for custom filename, no pause feature planned, as its targeted usecase is to log times for singletasks bundled in one place to check how much workday was used to work
             csv_filename=yn+'.csv'
-        add_time_to_csv(csv_filename, yn)
+        add_time_to_csv(csv_filename, today_var, yn)
     elif fix_lastday == True:
         uhrzeitende=input('eingabe von ende Uhrzeit für den letzten Tag:%H:%M:%S')
         close_lastday(csv_filename, uhrzeitende)
