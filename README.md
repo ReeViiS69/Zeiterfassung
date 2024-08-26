@@ -1,3 +1,10 @@
+Big Thanks to the Team behind Pyinstaller, im new to this and really didnt found the right way to give credit, so please inform me on nessesary changes!
+
+Visit:
+https://github.com/pyinstaller/pyinstaller/
+https://pyinstaller.org
+, to learn more about them to compile python to windows executable
+
 Consolen-Python "Programm"(script)
 
 Ursprünglich habe ich es in einfachster Form mit Start- und Endzeiten verwendet, um fehlerhafte Korrekturen in der Firmenlösung nachzuhalten. 
@@ -13,3 +20,5 @@ Stundenrechner ist aktuell für 6Stunden eingestellt und wertet wochendtage nich
 
 todo: Auswertung von Stundenrechner in .csv schreiben
 late todo: configfile für time_log_monthly und stundenrechner implementieren, einstellungen sind aktuell im quelltext hardcoded und nicht als constanten angelegt
+
+
