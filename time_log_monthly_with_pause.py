@@ -152,12 +152,11 @@ def check_lastday_today(last_line, today_var):
             print('last starttime day nottoday')
             fix_lastday= True
             
-            return True, fix_lastday
+            return False, fix_lastday
         
-            #geplant soll hier irgendwas passieren das der letzte tag beendet wird und ein neuer aufgemacht wird wenn letzte line nicht heute ist
         else:
             
-            return False, fix_lastday
+            return True, fix_lastday
 
 def close_lastday(filename, uhrzeitende):
     print('close lastday:last_line:',last_line,':end lastline')
@@ -200,7 +199,7 @@ if __name__ == "__main__":
         yn=input('Use default filename Year-Month_USERNAME_time_log.csv (enter for default/p: pause in default/name: own name=only time,no pause):')
     
     endedday_today_bool, fix_lastday = check_lastday_today(last_line, today_var)
-    if endedday_today_bool == False:
+    if fix_lastday == False:
         if yn=='p':
             yn=advise_time_insteadof_pause(last_line, yn)
             print('check t io p result: ', yn)
@@ -214,8 +213,7 @@ if __name__ == "__main__":
     elif fix_lastday == True:
         uhrzeitende=input('eingabe von ende Uhrzeit für den letzten Tag:%H:%M:%S')
         close_lastday(csv_filename, uhrzeitende)
-        #hier kommt etwas aufwendigeres, wenn None muss pausen nach hinten, und endzeit für gestrigen tag einfügen
-    else:
+    elif endedday_today_bool == True:
         print('heute schon abgeschlossen')
         reenterday=input('tag wieder aufmachen? enter=ja, was anderes=nein')
         if reenterday != '':
