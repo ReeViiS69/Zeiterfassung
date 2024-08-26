@@ -5,6 +5,20 @@ https://github.com/pyinstaller/pyinstaller/
 https://pyinstaller.org
 , to learn more about them to compile python to windows executable
 
+HOW TO USE:
+2 Modes: 
+1.Custom filename ( was planned to only use for single tasks)
+enter name-> currenttime gets saved, rerun script to enter endtime.(legacy (enter p) to pause cant work because limited user inputs possible, i guess the new reopen today function could work, but didnt tested it)
+
+2.Main Mode: Filename is automaticly created by year-month_loggedinuser_time_log.csv
+it should be kinda smart, you can enter p for pause or nothing for timestamp
+you could enter what ever, because pause or time will always chosen right
+in release1.1 it also checks if you forgot to end the last day, so you can enter a custom time, before opening another day thru rerunning the program
+
+default is always to press enter!
+
+
+BACKSTORY:
 Consolen-Python "Programm"(script)
 
 Ursprünglich habe ich es in einfachster Form mit Start- und Endzeiten verwendet, um fehlerhafte Korrekturen in der Firmenlösung nachzuhalten. 
