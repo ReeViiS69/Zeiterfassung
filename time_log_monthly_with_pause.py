@@ -131,6 +131,7 @@ def reopentoday(filename, last_line, today_var):
 def check_lastday_today(last_line, today_var):
     print('check_last_last_line:',last_line,':endline')
     try:
+        print(last_line)
         last_endtime=datetime.strptime(last_line.split(';')[1], '%Y-%m-%d %H:%M:%S')
         fix_lastday = False
         if last_endtime.day == today_var.day:
@@ -156,7 +157,7 @@ def check_lastday_today(last_line, today_var):
         
         else:
             
-            return True, fix_lastday
+            return False, fix_lastday
 
 def close_lastday(filename, uhrzeitende):
     print('close lastday:last_line:',last_line,':end lastline')
@@ -193,11 +194,12 @@ if __name__ == "__main__":
         last_line=last_happend(csv_filename)
         print(last_line)
         yn=input('default file found, enter for timestamp, p for pause:')
+        endedday_today_bool, fix_lastday = check_lastday_today(last_line, today_var)
     except:
-        last_line=['']
+        last_line=''
         yn=input('Use default filename Year-Month_USERNAME_time_log.csv (enter for default/p: pause in default/name: own name=only time,no pause):')
+        endedday_today_bool, fix_lastday=False,False
     
-    endedday_today_bool, fix_lastday = check_lastday_today(last_line, today_var)
     if fix_lastday == False:
         if yn=='p':
             yn=advise_time_insteadof_pause(last_line, yn)
@@ -208,15 +210,16 @@ if __name__ == "__main__":
         if '' != yn and yn != 'p':
             #for custom filename, no pause feature planned, as its targeted usecase is to log times for singletasks bundled in one place to check how much workday was used to work
             csv_filename=yn+'.csv'
-        add_time_to_csv(csv_filename, today_var, yn)
     elif fix_lastday == True:
-        uhrzeitende=input('eingabe von ende Uhrzeit für den letzten Tag:%H:%M:%S')
-        close_lastday(csv_filename, uhrzeitende)
-    elif endedday_today_bool == True:
+        uhrzeitende=input('eingabe von ende Uhrzeit für den letzten Tag(%H:%M):')
+        close_lastday(csv_filename, uhrzeitende+':00')
+    if endedday_today_bool == True:
         print('heute schon abgeschlossen')
         reenterday=input('tag wieder aufmachen? enter=ja, was anderes=nein')
         if reenterday != '':
             print('ok, bye')
         else:
             reopentoday(csv_filename, last_line, today_var)
+    else:
+        add_time_to_csv(csv_filename, today_var, yn)
     #input('finished, anykey to exit')
