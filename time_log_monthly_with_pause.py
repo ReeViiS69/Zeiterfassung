@@ -164,7 +164,6 @@ def close_lastday(filename, uhrzeitende):
     start= last_entrys[0]
     end=start.split(' ')[0]+' '+uhrzeitende
     current_line=start+';'+end+';'
-    #end =startdate+uhrzeitende als zeit
     try:
         temp=last_entrys[1].split('/')
         pausen=temp[0:-1]
