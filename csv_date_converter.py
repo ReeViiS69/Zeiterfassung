@@ -1,7 +1,6 @@
 import csv
-import configparser
-from os import getlogin, path
-from datetime import datetime as dt, timedelta as td
+from os import getlogin
+from datetime import datetime as dt
 
 def read_file(filename):
     with open(filename, mode='r', newline='') as file:
