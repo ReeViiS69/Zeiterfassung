@@ -222,4 +222,4 @@ if __name__ == "__main__":
             reopentoday(csv_filename, last_line, today_var)
     else:
         add_time_to_csv(csv_filename, today_var, yn)
-    #input('finished, anykey to exit')
+    input('finished, anykey to exit')
