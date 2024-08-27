@@ -1,6 +1,33 @@
 import csv
-from os import getlogin
+import configparser
+from os import getlogin, path
 from datetime import datetime as dt, timedelta as td
+
+def create_config_ini(filename):#stundenrechner.ini
+    config['DEFAULT']={'soll_zeit':'6',
+                       'start_uhrzeit':'9'}
+    with open(filename, 'w')as configfile:
+        config.write(configfile)
+        return config
+
+def get_config_ini(filename):
+    config = configparser.RawConfigParser()
+    if check_exists(filename):
+        with open(filename, 'r')as configfile:
+            config.read(filename)
+            details_dict = dict(config.items('DEFAULT'))
+            
+            
+    else:
+        config=create_config_ini(filename)
+        details_dict = dict(config.items('DEFAULT'))
+        
+    return details_dict
+
+def check_exists(filename):
+    if path.isfile(filename) and path.getsize(filename) > 0:
+        
+        return True
 
 def read_file(filename):
     with open(filename, mode='r', newline='') as file:
@@ -28,15 +55,7 @@ def calc_pause_line(line, last_workend, error):
                         pause_tag += min(pause_end, last_workend) - pause_start
                     
     return pause_tag, error
-'''
-def calc_time_line(line):
-    start_time, end_time = [dt.strptime(time_str, '%Y-%m-%d %H:%M:%S') for time_str in line.split(';')[:2]]
-    if end_time.hour < start_uhrzeit:
-        end_time = end_time.replace(hour=start_uhrzeit, minute=0, second=0)
-    time_tag = end_time - start_time
-    
-    return time_tag, end_time
-'''
+
 def calc_time_line(line, last_time, error):
     cur_day_bool = False
     current_times  = line.split(';')
@@ -58,11 +77,11 @@ def calc_time_line(line, last_time, error):
             cur_day_bool = True
         time_tag      = current_time_dt-cur_datetime
     except ValueError:
-        #leck mich mir fällt kein guter weg ein wie ich hier die datenfülle wenn die line da ist aber kacke drin steht
         time_tag=td()
         current_time_dt=last_time
 
     return time_tag, current_time_dt, cur_day_bool,error
+
 def calculator(lines, soll_zeit):
     error = ''
     ist_zeit, ist_pause = td(), td()
@@ -114,10 +133,11 @@ def werktage_im_monat(cal_month):
 
 if __name__ == "__main__":
     #csv_filename = input('enter filename(dont enter .csv at the end):')+'.csv'
+    config=get_config_ini('stundenrechner.ini')
     modus       = input('einzeln(1) oder bulk(2)?')
     heute=dt.today()
-    soll_zeit      = 6#input('enter targeted hours per day:')
-    start_uhrzeit  = 9
+    soll_zeit      = int(config['soll_zeit'])
+    start_uhrzeit  = int(config['start_uhrzeit'])
     abweichung, ist_pause, days, weknd, error=td(),td(),0,0,''
     if int(modus) == 1:
         monate_back = int(input('wie viele monate zurück?0für diesen monat(zwischenrechnung) bis x für januar letztes jahr: '))
