@@ -13,7 +13,7 @@ enter name-> currenttime gets saved, rerun script to enter endtime.(legacy (ente
 2.Main Mode: Filename is automaticly created by year-month_loggedinuser_time_log.csv
 it should be kinda smart, you can enter p for pause or nothing for timestamp
 you could enter what ever, because pause or time will always chosen right
-in release1.1 it also checks if you forgot to end the last day, so you can enter a custom time, before opening another day thru rerunning the program
+in release1.1 it also checks if you forgot to end the last day, so you can enter a custom time to close old day, before opening another day automaticly
 
 default is always to press enter!
 
