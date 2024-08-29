@@ -194,6 +194,8 @@ if __name__ == "__main__":
         last_line=last_happend(csv_filename)
         print(last_line)
         yn=input('default file found, enter for timestamp, p for pause:')
+        if yn!='' and yn!='p':
+            last_line='';
         endedday_today_bool, fix_lastday = check_lastday_today(last_line, today_var)
     except:
         last_line=''

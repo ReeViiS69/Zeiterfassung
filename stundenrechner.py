@@ -3,7 +3,7 @@ import configparser
 from os import getlogin, path
 from datetime import datetime as dt, timedelta as td
 
-def create_config_ini(filename):#stundenrechner.ini
+def create_config_ini(filename, config):#stundenrechner.ini
     config['DEFAULT']={'soll_zeit':'6',
                        'start_uhrzeit':'9'}
     with open(filename, 'w')as configfile:
@@ -15,12 +15,10 @@ def get_config_ini(filename):
     if check_exists(filename):
         with open(filename, 'r')as configfile:
             config.read(filename)
-            details_dict = dict(config.items('DEFAULT'))
-            
             
     else:
-        config=create_config_ini(filename)
-        details_dict = dict(config.items('DEFAULT'))
+        config=create_config_ini(filename, config)
+    details_dict = dict(config.items('DEFAULT'))
         
     return details_dict
 
@@ -33,7 +31,11 @@ def read_file(filename):
     with open(filename, mode='r', newline='') as file:
         
         return file.readlines()
-    
+
+def write_output(csv_filename, abweichung, ist_pause, days, weknd, error):
+    with open('testoutput.csv', mode='a', newline='') as file:
+        file.write(csv_filename+';' +str(abweichung)+';' +str(ist_pause)+';' +str(days)+';' +str(weknd)+';' +error+'\n')
+        
 def calc_pause_line(line, last_workend, error):
     pause_tag = td()
     current_pauses = line.split(';')[2:]
@@ -56,7 +58,7 @@ def calc_pause_line(line, last_workend, error):
                     
     return pause_tag, error
 
-def calc_time_line(line, last_time, error):
+def calc_time_line(line, last_time, start_uhrzeit, error):
     cur_day_bool = False
     current_times  = line.split(';')
     try:
@@ -82,13 +84,13 @@ def calc_time_line(line, last_time, error):
 
     return time_tag, current_time_dt, cur_day_bool,error
 
-def calculator(lines, soll_zeit):
+def calculator(lines, soll_zeit, start_uhrzeit):
     error = ''
     ist_zeit, ist_pause = td(), td()
     last_time=dt.today()
     days, weknd = 0, 0
     for line in lines[1:]:
-        time_tag, last_time, cur_day_bool, error = calc_time_line(line, last_time, error)
+        time_tag, last_time, cur_day_bool, error = calc_time_line(line, last_time, start_uhrzeit, error)
         if cur_day_bool and last_time.weekday() > 4:
             print('test:curday weekend')
         elif cur_day_bool:
@@ -131,13 +133,17 @@ def werktage_im_monat(cal_month):
     
     return werktage, weekend
 
-if __name__ == "__main__":
-    #csv_filename = input('enter filename(dont enter .csv at the end):')+'.csv'
+def stundenrechner():
     config=get_config_ini('stundenrechner.ini')
     modus       = input('einzeln(1) oder bulk(2)?')
     heute=dt.today()
     soll_zeit      = int(config['soll_zeit'])
     start_uhrzeit  = int(config['start_uhrzeit'])
+    target=input('enter=eigener Nutzer, other=username:')
+    if target=='':
+        username=getlogin()
+    else:
+        username=target
     abweichung, ist_pause, days, weknd, error=td(),td(),0,0,''
     if int(modus) == 1:
         monate_back = int(input('wie viele monate zurück?0für diesen monat(zwischenrechnung) bis x für januar letztes jahr: '))
@@ -145,9 +151,10 @@ if __name__ == "__main__":
             target_name= heute.replace(month=12-monate_back+heute.month, year=heute.year - 1)
         else:
             target_name= heute.replace(month=heute.month - monate_back)    
-        csv_filename   = target_name.strftime('%Y-%m'+'_'+getlogin()+'_time_log.csv')
+        csv_filename   = target_name.strftime('%Y-%m'+'_'+username+'_time_log.csv')
         print(werktage_im_monat(target_name))
-        abweichung, ist_pause, days, weknd, error= calculator(read_file(csv_filename), soll_zeit)
+        abweichung, ist_pause, days, weknd, error= calculator(read_file(csv_filename), soll_zeit, start_uhrzeit)
+        write_output(csv_filename, abweichung, ist_pause, days, weknd, error)
     else:
         monthly=0
         monate_back = int(input('wie viele monate zurück? bis januar letztes jahr: '))
@@ -161,13 +168,18 @@ if __name__ == "__main__":
                 target_name= heute.replace(month=heute.month - monate_back)
             print(werktage_im_monat(target_name))
             csv_filename   = target_name.strftime('%Y-%m'+'_'+getlogin()+'_time_log.csv')
-            abweichung_t, ist_pause_t, days_t, weknd_t, error= calculator(read_file(csv_filename), soll_zeit)
+            abweichung_t, ist_pause_t, days_t, weknd_t, error= calculator(read_file(csv_filename), soll_zeit, start_uhrzeit)
             abweichung+=abweichung_t
             ist_pause+=ist_pause_t
             days+=days_t
             weknd+=weknd_t
             error+=error
             monate_back-=1
-            
+            write_output(csv_filename, abweichung_t, ist_pause_t, days_t, weknd_t, error)
+    return abweichung, ist_pause, days, weknd, error
+
+if __name__ == "__main__":
+    #csv_filename = input('enter filename(dont enter .csv at the end):')+'.csv'
+    abweichung, ist_pause, days, weknd, error=stundenrechner()
     print('abweichung:',str(abweichung),'schon abgezogene pausezeit:',str(ist_pause),'gearbeitete tage:',days,'gearbeitete tage am we:',weknd,'errors:',error)
     input()
